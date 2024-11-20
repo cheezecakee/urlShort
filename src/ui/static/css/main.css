@@ -1,0 +1,317 @@
+:root {
+  --options: 3;
+  --accent-color: #fff;
+  --gradient-color: #FBFBFB;
+}
+
+html, body {
+    width: 100wh;
+    height: 100vh;
+    color: black;
+    background: #ffe500;
+    font-family: ;
+    overflow: hidden;
+}
+body {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: start;
+}
+header {
+    width: 100%;
+    text-align: center;
+    padding: 1rem;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+footer {
+    width: 100%;
+    text-align: center;
+    padding: 1rem;
+    background-color: none;
+    border-top: 1px solid #ddd;
+}
+
+form {
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+
+.result {
+    margin-top: 2rem;
+}
+
+a {
+    color: red;
+}
+a:link {
+    color: red;
+}
+a:hover {
+  color: black;
+  text-decoration: none;
+}
+a:visited {
+  color: black;
+  text-decoration: none;
+}
+a:active {
+  color: #ffe500;
+  text-decoration: none;
+}
+
+/* From Uiverse.io by Navarog21 */ 
+button {
+  width: 10em;
+  position: relative;
+  height: 3.5em;
+  border: 0.1875em ridge #212121;
+  outline: none;
+  background-color: transparent;
+  color: black;
+  transition: 1s;
+  border-radius: 0.3em;
+  font-size: 0.625em;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button::after {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 3%;
+  width: 95%;
+  height: 40%;
+  background-color: #ffe500;
+  transition: 0.5s;
+  transform-origin: center;
+}
+
+button::before {
+  content: "";
+  transform-origin: center;
+  position: absolute;
+  top: 80%;
+  left: 3%;
+  width: 95%;
+  height: 40%;
+  background-color: #ffe500;
+  transition: 0.5s;
+}
+
+button:hover::before, button:hover::after {
+  transform: scale(0)
+}
+
+button:hover {
+  box-shadow: inset 0em 0em 1.5625em #212121;
+}
+
+input {
+  align-items: center;
+  box-sizing: border-box;
+  border: 0.1875em solid transparent;
+  border-radius: 0.75em;
+  overflow: hidden;
+  background: #3D3D3D;
+  padding: 0.5625em;
+  cursor: text;
+  color: white;
+}
+
+input:hover {
+  border-color: white;
+}
+
+input:focus-within {
+  background: #464646;
+  border-color: gray;
+}
+
+input input {
+  outline: none;
+  width: 100%;
+  border: none;
+  background: none;
+  color: rgb(162, 162, 162);
+}
+
+/* From Uiverse.io by MikeeMikee */ 
+.radio-input input {
+  display: none;
+}
+
+.radio-input {
+  --container_width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  background-color: #ffe500;
+  color: black;
+  width: var(--container_width);
+  overflow: hidden;
+  border: 0.1875em solid gray;
+  margin-bottom: 10%;
+}
+
+.radio-input label {
+  width: 100%;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  font-weight: 600;
+  letter-spacing: -1px;
+  font-size: 14px;
+}
+
+.selection {
+  display: none;
+  position: absolute;
+  height: 100%;
+  width: calc(var(--container_width) / var(--options));
+  z-index: 0;
+  left: 0;
+  top: 0;
+  transition: 0.15s ease;
+}
+
+.radio-input label:has(input:checked) {
+  color: #fff;
+}
+
+.radio-input label:has(input:checked) ~ .selection {
+  background-color: #212121;
+  display: inline-block;
+}
+
+.radio-input label:nth-child(1):has(input:checked) ~ .selection {
+  transform: translateX(calc(var(--container_width) * 0 / var(--options)));
+}
+
+.radio-input label:nth-child(2):has(input:checked) ~ .selection {
+  transform: translateX(calc(var(--container_width) * 3 / var(--options)));
+}
+
+.radio-input label:nth-child(3):has(input:checked) ~ .selection {
+  transform: translateX(calc(var(--container_width) * 6 / var(--options)));
+}
+
+
+/* Hamburger Menu */
+#check {
+  display: none;
+}
+
+.toggle {
+  position: fixed;
+  width: 2em;
+  height: 2em;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  top: 1rem;
+  left: 1rem;
+  z-index: 2;
+  transition-duration: .3s;
+}
+
+.bars {
+  width: 100%;
+  height: 4px;
+  background-color: #212121;
+  border-radius: 5px;
+  transition-duration: .3s;
+}
+
+#check:checked + .toggle #bar2 {
+  transform: translateY(14px) rotate(60deg);
+  margin-left: 10;
+  transform-origin: right;
+  transition-duration: .3s;
+  z-index: 2;
+}
+
+#check:checked + .toggle #bar1 {
+  transform: translateY(28px) rotate(-60deg);
+  transition-duration: .3s;
+  transform-origin: left;
+  z-index: 1;
+}
+
+#check:checked + .toggle {
+  transform: rotate(-90deg);
+  left: 15rem;
+  transition: all .5s ease;
+}
+
+.sidebar{
+  position: fixed;
+  width: 240px;
+  left: -240px;
+  height: 100%;
+  top: 0;
+  background-color: #212121;
+  transition: all .5s ease;
+}
+
+.sidebar a{
+  display: block;
+  height: 65px;
+  width: 100%;
+  color: #fff;
+  line-height: 65px;
+  padding-left: 30px;
+  box-sizing: border-box;
+  border-left: 5px solid transparent;
+  font-family: 'Lato', sans-serif;
+  transition: all .5s ease;
+  text-decoration: none; /* Prevents underlining */
+}
+a.active,a:hover{
+  border-left: 5px solid #ffe500;
+  color: #212121;
+  background: #a3a3a3;
+   /* background: linear-gradient(to left, #ffe500, #a3a3a3); */
+}
+.sidebar a i{
+  font-size: 23px;
+  margin-right: 16px;
+}
+.sidebar a span{
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+#check:checked ~ .sidebar{
+  left: 0;
+}
+
+#check:checked ~ label #btn{
+  margin-left: 245px;
+  opacity: 0;
+  visibility: hidden;
+}
+#check:checked ~ label #cancel{
+  margin-left: 245px;
+  opacity: 1;
+  visibility: visible;
+}
+

@@ -1,0 +1,51 @@
+{{define "base"}}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" href="static/css/main.css">
+
+    <script src="https://unpkg.com/htmx.org@2.0.3"></script>
+  </head>
+  <body>
+    <header>
+      <h1>URL Shortener</h1>
+    </header>
+    <main>
+      {{template "nav" .}}
+
+      <p>This is a simple URL shortener</p>
+      <form hx-post="/shortenUrl" hx-target="#result" hx-swap="outerHTML">
+
+        <div class="radio-input">
+          <label>
+          <input value="short" id="value-1" name="format" type="radio" checked="checked">
+          <span>Short</span>
+          </label>
+          <label>
+          <input value="qr" id="value-2" name="format" type="radio">
+          <span>QR Code</span>
+          </label>
+          <label>
+          <input value="custom" id="value-3" name="format" type="radio">
+          <span>Custom</span>
+          </label>
+          <span class="selection"></span>
+        </div>
+
+        <div class="custom"></div>
+
+        <input type="url" id="longurl" name="longurl" placeholder="Type here..." required>
+        <button type="submit">Generate</button>
+      </form>
+
+
+      <div class="result" id="result"></div>
+    </main>
+    <footer>
+    </footer>
+  </body>
+</html>
+{{end}}
