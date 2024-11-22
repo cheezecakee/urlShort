@@ -1,0 +1,15 @@
+package components
+
+templ Base(content templ.Component) {
+    <body>
+        {Header()}
+        <main> 
+            Nav()
+            {content.Render()}
+        </main> 
+        {Footer()}
+    </body>
+}
+
+
+

@@ -1,16 +1,12 @@
 package web
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
-	"html/template"
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
 
-	qrcode "github.com/skip2/go-qrcode"
+	"github.com/cheezecakee/urlShort/src/components"
 )
 
 func Run() {
@@ -29,31 +25,35 @@ func routes() http.Handler {
 	mux.Handle("/static/", http.StripPrefix("/static", http.FileServer(http.Dir("./src/ui/static/"))))
 
 	mux.Handle("GET /{$}", http.HandlerFunc(home))
+	mux.Handle("GET /format", http.HandlerFunc(format))
 	mux.Handle("GET /{url}", MapHandler(http.NotFoundHandler()))
 	mux.Handle("POST /shortenUrl", http.HandlerFunc(shortenUrl))
 
 	return mux
 }
 
-func home(w http.ResponseWriter, r *http.Request) {
-	templatePath := "./src/ui/templates/"
-	homePath := templatePath + "base.templ"
-	navPath := templatePath + "nav.templ"
+type Format struct {
+	Custom bool
+}
 
-	tmpl, err := template.ParseFiles(
-		homePath,
-		navPath,
-	)
-	if err != nil {
-		http.Error(w, "Unable to load templates", http.StatusInternalServerError)
-		log.Printf("Template error: %v", err)
-		return
+func format(w http.ResponseWriter, r *http.Request) {
+	var f Format
+	format := r.FormValue("format")
+	fmt.Println("format: ", format)
+	switch format {
+	case "custom":
+		f.Custom = true
+	default:
+		f.Custom = false
 	}
 
-	err = tmpl.ExecuteTemplate(w, "base", nil)
+	fmt.Println("custom: ", f.Custom)
+}
+
+func home(w http.ResponseWriter, r *http.Request) {
+	err := renderTempl(r.Context(), w, components.Home())
 	if err != nil {
-		http.Error(w, "Unable to execute template", http.StatusInternalServerError)
-		log.Printf("Execution error: %v", err)
+		http.Error(w, "Failed to render Home page", http.StatusInternalServerError)
 	}
 }
 
@@ -107,30 +107,4 @@ func shortenUrl(w http.ResponseWriter, r *http.Request) {
 	// Display result
 	w.Header().Set("Content-Type", "text/html")
 	w.Write([]byte(response))
-}
-
-func generateShortUrl(longUrl string) string {
-	hash := sha256.New()
-	hash.Write([]byte(longUrl))
-	hashBytes := hash.Sum(nil)
-
-	shortUrl := hex.EncodeToString(hashBytes)[:6]
-	return shortUrl
-}
-
-func generateQRCode(longUrl string) (fileName string, filePath string) {
-	err := os.MkdirAll("./src/ui/static/QRCodes", os.ModePerm)
-	if err != nil {
-		fmt.Printf("failed to create output directory: %v", err)
-	}
-
-	fileName = fmt.Sprintf("%x.png", sha256.Sum256([]byte(longUrl)))
-	filePath = filepath.Join("./src/ui/static/QRCodes", fileName)
-
-	err = qrcode.WriteFile(longUrl, qrcode.Medium, 256, filePath)
-	if err != nil {
-		fmt.Printf("Failed to encode qrcode: %v", err)
-	}
-
-	return fileName, filePath
 }

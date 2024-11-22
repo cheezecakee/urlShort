@@ -1,18 +1,9 @@
-- path: "927187"
-  url: http://facebook.com
+- path: 7b2688
+  url: https://www.twitch.tv
+  qrcode: src/ui/static/QRCodes/7b268867f0bcfee0f655c7c9ef587d503d51de41a1253f215380cdf7856269b1.png
+- path: github
+  url: https://github.com
   qrcode: ""
 - path: google
   url: https://google.com
   qrcode: ""
-- path: 7b2688
-  url: https://www.twitch.tv
-  qrcode: ""
-- path: 2c0a96
-  url: https://developer.mozilla.org/en-US/docs/Web/CSS/flex-direction
-  qrcode: ""
-- path: github
-  url: https://github.com
-  qrcode: ""
-- path: 7b268867f0bcfee0f655c7c9ef587d503d51de41a1253f215380cdf7856269b1.png
-  url: https://www.twitch.tv
-  qrcode: src/ui/static/QRCodes/7b268867f0bcfee0f655c7c9ef587d503d51de41a1253f215380cdf7856269b1.png
