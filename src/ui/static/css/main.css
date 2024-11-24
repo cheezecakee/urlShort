@@ -1,7 +1,5 @@
 :root {
   --options: 3;
-  --accent-color: #fff;
-  --gradient-color: #FBFBFB;
 }
 
 html, body {
@@ -39,16 +37,12 @@ footer {
     text-align: center;
     padding: 1rem;
     background-color: none;
-    border-top: 1px solid #ddd;
+    border-top: 0.0625em solid #ddd;
 }
 
 form {
   margin-top: 1rem;
   margin-bottom: 2rem;
-}
-
-.result {
-    margin-top: 2rem;
 }
 
 a {
@@ -89,7 +83,7 @@ button {
 button::after {
   content: "";
   position: absolute;
-  top: -10px;
+  top: -0.625em;
   left: 3%;
   width: 95%;
   height: 40%;
@@ -147,7 +141,87 @@ input input {
   color: rgb(162, 162, 162);
 }
 
-/* From Uiverse.io by MikeeMikee */ 
+input.small {
+  width: 50%;
+}
+
+.custom-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75em; /* Spacing between items */
+    width: 100%;
+}
+
+.custom-options label {
+    display: flex;
+    flex-direction: row;
+    font-size: 0.875em;
+    align-items: start;
+    justify-content: start;
+}
+
+.custom-container {
+    display: flex;
+    width: var(--container_width); /* Match the width of .radio-input */
+    padding-bottom: 1em;
+    align-items: stretch;
+}
+
+/* Checkbox */
+.checkBox-content {
+    display: grid;
+    width: 50%;
+    grid-template-columns: repeat(2, 1fr); /* Two columns */
+    align-items: center; /* Center items horizontally */
+    grid-row-gap: 0.25em; /* Adjust the vertical gap between the checkboxes */
+    column-gap: 10%;
+}
+
+.checkBox {
+    display: block;
+    cursor: pointer;
+    width: 1.25em; 
+    height: 1.25em;
+    border: 0.1875em solid rgba(255, 229, 0, 1);
+    border-radius: 0.4em;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0px 0px 0px 0.125em #000;
+    margin-bottom: 1em; 
+}
+
+.checkBox div {
+    width: 3.75em;
+    height: 3.75em;
+    background-color: #000;
+    top: -3.25em; 
+    left: -3.25em;
+    position: absolute;
+    transform: rotateZ(45deg);
+    z-index: 100;
+}
+
+.checkBox input[type="checkbox"]:checked + div {
+    left: -0.625em; 
+    top: -0.625em;
+}
+
+.checkBox input[type="checkbox"] {
+    position: absolute;
+    left: 3.125em;
+    visibility: hidden;
+}
+
+/* Transition for the 'check' mark */
+.transition {
+    transition: 300ms ease;
+}
+
+.clear {
+    clear: both;
+}
+
+/* Radio options */ 
 .radio-input input {
   display: none;
 }
@@ -156,8 +230,9 @@ input input {
   --container_width: 100%;
   position: relative;
   display: flex;
+  flex-direction: row;
   align-items: center;
-  border-radius: 10px;
+  border-radius: 0.625em;
   background-color: #ffe500;
   color: black;
   width: var(--container_width);
@@ -168,15 +243,15 @@ input input {
 
 .radio-input label {
   width: 100%;
-  padding: 10px;
+  padding: 0.625em;
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1;
   font-weight: 600;
-  letter-spacing: -1px;
-  font-size: 14px;
+  letter-spacing: -0.063rem;
+  font-size: 0.875rem;
 }
 
 .selection {
@@ -212,7 +287,7 @@ input input {
 }
 
 
-/* Hamburger Menu */
+/* Hamburger Menu + Sidebar */
 #check {
   display: none;
 }
@@ -226,23 +301,23 @@ input input {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  top: 1rem;
-  left: 1rem;
+  gap: 0.625em;
+  top: 1em;
+  left: 1em;
   z-index: 2;
   transition-duration: .3s;
 }
 
 .bars {
   width: 100%;
-  height: 4px;
+  height: 0.25em;
   background-color: #212121;
   border-radius: 5px;
   transition-duration: .3s;
 }
 
 #check:checked + .toggle #bar2 {
-  transform: translateY(14px) rotate(60deg);
+  transform: translateY(0.875em) rotate(60deg);
   margin-left: 10;
   transform-origin: right;
   transition-duration: .3s;
@@ -250,7 +325,7 @@ input input {
 }
 
 #check:checked + .toggle #bar1 {
-  transform: translateY(28px) rotate(-60deg);
+  transform: translateY(1.75em) rotate(-60deg);
   transition-duration: .3s;
   transform-origin: left;
   z-index: 1;
@@ -264,8 +339,8 @@ input input {
 
 .sidebar{
   position: fixed;
-  width: 240px;
-  left: -240px;
+  width: 15em;
+  left: -15em;
   height: 100%;
   top: 0;
   background-color: #212121;
@@ -274,29 +349,30 @@ input input {
 
 .sidebar a{
   display: block;
-  height: 65px;
+  height: 4.0625em;
   width: 100%;
   color: #fff;
-  line-height: 65px;
-  padding-left: 30px;
+  line-height: 4.0625em;
+  padding-left: 1.875em;
   box-sizing: border-box;
-  border-left: 5px solid transparent;
+  border-left: 0.3125em solid transparent;
   font-family: 'Lato', sans-serif;
   transition: all .5s ease;
   text-decoration: none; /* Prevents underlining */
 }
+
 a.active,a:hover{
-  border-left: 5px solid #ffe500;
+  border-left: 0.3125em solid #ffe500;
   color: #212121;
   background: #a3a3a3;
    /* background: linear-gradient(to left, #ffe500, #a3a3a3); */
 }
 .sidebar a i{
-  font-size: 23px;
-  margin-right: 16px;
+  font-size: 1.438rem;
+  margin-right: 1em;
 }
 .sidebar a span{
-  letter-spacing: 1px;
+  letter-spacing: 0.063rem;
   text-transform: uppercase;
 }
 
@@ -305,13 +381,21 @@ a.active,a:hover{
 }
 
 #check:checked ~ label #btn{
-  margin-left: 245px;
+  margin-left: 15.3125em;
   opacity: 0;
   visibility: hidden;
 }
 #check:checked ~ label #cancel{
-  margin-left: 245px;
+  margin-left: 15.3125em;
   opacity: 1;
   visibility: visible;
 }
 
+.img-qr {
+    width: 9.375em;
+    height: 9.375em;
+}
+
+tr {
+    text-align: center;
+}

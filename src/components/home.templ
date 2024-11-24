@@ -1,0 +1,37 @@
+package components 
+
+templ Home(Custom bool){ @Base("Home", "URL Shortener", HomeContent(Custom))
+}
+
+templ HomeContent(Custom bool) {
+    <p>This is a simple URL shortener</p>
+        
+    <form hx-post="/shortenUrl" hx-target="#result" hx-swap="outerHTML">
+        <div class="radio-input">
+            <label>
+                <input value="short" id="value-1" name="format" type="radio" checked="checked"
+                    hx-post="/format" hx-trigger="change" hx-target="#custom-container" hx-swap="outerHTML" />
+                <span>Short</span>
+            </label>
+            <label>
+                <input value="qr" id="value-2" name="format" type="radio"
+                    hx-post="/format" hx-trigger="change" hx-target="#custom-container" hx-swap="outerHTML" />
+                <span>QR Code</span>
+            </label>
+            <label>
+                <input value="custom" id="value-3" name="format" type="radio"
+                    hx-post="/format" hx-trigger="change" hx-target="#custom-container" hx-swap="outerHTML" />
+                <span>Custom</span>
+            </label>
+            <span class="selection"></span>
+        </div>
+
+        @CustomContainer(Custom)
+
+        <input type="url" id="longurl" name="longurl" placeholder="Type here..." required />
+      <button type="submit">Generate</button>
+
+    </form>
+    <div class="result" id="result"></div>
+}
+

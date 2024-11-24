@@ -1,16 +1,15 @@
 package web
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
-	"html/template"
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
+	"strconv"
+	"time"
 
-	qrcode "github.com/skip2/go-qrcode"
+	"github.com/cheezecakee/urlShort/src/components"
+	i "github.com/cheezecakee/urlShort/src/internal"
 )
 
 func Run() {
@@ -30,30 +29,57 @@ func routes() http.Handler {
 
 	mux.Handle("GET /{$}", http.HandlerFunc(home))
 	mux.Handle("GET /{url}", MapHandler(http.NotFoundHandler()))
+	mux.Handle("GET /stats", http.HandlerFunc(stats))
+	mux.Handle("GET /expired", http.HandlerFunc(expired))
+	mux.Handle("POST /format", http.HandlerFunc(format))
 	mux.Handle("POST /shortenUrl", http.HandlerFunc(shortenUrl))
 
 	return mux
 }
 
-func home(w http.ResponseWriter, r *http.Request) {
-	templatePath := "./src/ui/templates/"
-	homePath := templatePath + "base.templ"
-	navPath := templatePath + "nav.templ"
+func format(w http.ResponseWriter, r *http.Request) {
+	var custom bool
 
-	tmpl, err := template.ParseFiles(
-		homePath,
-		navPath,
-	)
+	format := r.FormValue("format")
+	switch format {
+	case "custom":
+		custom = true
+	default:
+		custom = false
+	}
+	// fmt.Printf("format: %v\ncustom: %v\n", format, custom)
+	err := renderTempl(r.Context(), w, components.CustomContainer(custom))
 	if err != nil {
-		http.Error(w, "Unable to load templates", http.StatusInternalServerError)
-		log.Printf("Template error: %v", err)
-		return
+		http.Error(w, "Failed to render custom container", http.StatusInternalServerError)
+	}
+}
+
+func home(w http.ResponseWriter, r *http.Request) {
+	err := renderTempl(r.Context(), w, components.Home(false))
+	if err != nil {
+		http.Error(w, "Failed to render Home page", http.StatusInternalServerError)
+	}
+}
+
+func expired(w http.ResponseWriter, r *http.Request) {
+	err := renderTempl(r.Context(), w, components.Expired())
+	if err != nil {
+		http.Error(w, "Failed to render Home page", http.StatusInternalServerError)
+	}
+}
+
+func stats(w http.ResponseWriter, r *http.Request) {
+	pathUrl := "./src/internal/data.yaml"
+	pathMap := loadYAML(pathUrl)
+
+	var urlMappings []i.URLMapping
+	for _, mapping := range pathMap {
+		urlMappings = append(urlMappings, mapping)
 	}
 
-	err = tmpl.ExecuteTemplate(w, "base", nil)
+	err := renderTempl(r.Context(), w, components.Stats(urlMappings))
 	if err != nil {
-		http.Error(w, "Unable to execute template", http.StatusInternalServerError)
-		log.Printf("Execution error: %v", err)
+		http.Error(w, "Failed to render Home page", http.StatusInternalServerError)
 	}
 }
 
@@ -75,62 +101,92 @@ func shortenUrl(w http.ResponseWriter, r *http.Request) {
 	)
 
 	path := generateShortUrl(longUrl)
+	var expiresIn time.Time
 
 	format := r.FormValue("format")
 	switch format {
 	case "short":
 		response = fmt.Sprintf(`<div id="result"><p>Your shortened URL: <a href="/%s">[Link]</a></p></div>`, path)
 		fmt.Println("Short url option selected")
+		expiresIn = time.Time{}
 	case "qr":
 		fmt.Println("QR Code option selected")
 
 		qrName, qrPath = generateQRCode(longUrl)
 		response = fmt.Sprintf(`
 			<div class="result" id="result">
-				<img src="static/QRCodes/%s" alt="QR Code"/>
+				<img class="img-qr" src="static/QRCodes/%s" alt="QR Code"/>
 			</div>
 		`, qrName)
+		expiresIn = time.Time{}
 	case "custom":
+		customSlug := r.FormValue("custom_slug")
+		expirationHours := r.FormValue("expiration")
+
+		// Check what the user selected
+		returnLink := r.FormValue("check-link") != ""
+		returnQR := r.FormValue("check-qr") != ""
+
+		// Generate the response dynamically
+		if returnQR {
+			qrName, qrPath = generateQRCode(customSlug)
+		}
+
+		fmt.Printf("customSlug: %v\nexpirationHours: %v\n", customSlug, expirationHours)
+		fmt.Printf("Link: %v\nQR: %v\n", returnLink, returnQR)
+
+		if customSlug == "" {
+			http.Error(w, "Custom slug is required", http.StatusBadRequest)
+			return
+		}
+
+		hours := 0
+		if expirationHours != "" {
+			hours, _ = strconv.Atoi(expirationHours)
+		}
+		if hours == 0 {
+			expiresIn = time.Time{} // No expiration
+		} else {
+			expiresIn = time.Now().Add(time.Duration(hours) * time.Hour)
+		}
+
+		path = customSlug
+
+		switch {
+		case returnLink && returnQR:
+			response = fmt.Sprintf(`
+				<div class="result" id="result">
+					<p>Your custom URL: <a href="/%s">[%s]</a></p>
+					<img class="img-qr" src="static/QRCodes/%s" alt="QR Code"/>
+				</div>
+			`, path, path, qrName)
+
+		case returnLink:
+			response = fmt.Sprintf(`<div id="result"><p>Your custom URL: <a href="/%s">[%s]</a></p></div>`, path, path)
+		case returnQR:
+			response = fmt.Sprintf(`
+				<div class="result" id="result">
+					<img class="img-qr" src="static/QRCodes/%s" alt="QR Code"/>
+				</div>
+			`, qrName)
+		}
 	default:
 		http.Error(w, "Invalid format selected", http.StatusBadRequest)
 	}
 
 	fmt.Printf("Shortened URL: %s -> %s\n", longUrl, path)
 	// Save mappings to data.yaml
-	existingMappings[path] = PathList{
-		Path:   path,
-		URL:    longUrl,
-		QRCode: qrPath,
+	existingMappings[path] = i.URLMapping{
+		Path:         path,
+		URL:          longUrl,
+		QRCode:       qrPath,
+		ClickCount:   0,
+		CreationDate: time.Now(),
+		Expires:      expiresIn, // 0 means never
 	}
 	SaveYAML(pathUrl, existingMappings)
 
 	// Display result
 	w.Header().Set("Content-Type", "text/html")
 	w.Write([]byte(response))
-}
-
-func generateShortUrl(longUrl string) string {
-	hash := sha256.New()
-	hash.Write([]byte(longUrl))
-	hashBytes := hash.Sum(nil)
-
-	shortUrl := hex.EncodeToString(hashBytes)[:6]
-	return shortUrl
-}
-
-func generateQRCode(longUrl string) (fileName string, filePath string) {
-	err := os.MkdirAll("./src/ui/static/QRCodes", os.ModePerm)
-	if err != nil {
-		fmt.Printf("failed to create output directory: %v", err)
-	}
-
-	fileName = fmt.Sprintf("%x.png", sha256.Sum256([]byte(longUrl)))
-	filePath = filepath.Join("./src/ui/static/QRCodes", fileName)
-
-	err = qrcode.WriteFile(longUrl, qrcode.Medium, 256, filePath)
-	if err != nil {
-		fmt.Printf("Failed to encode qrcode: %v", err)
-	}
-
-	return fileName, filePath
 }
