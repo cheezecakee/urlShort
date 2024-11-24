@@ -1,15 +1,20 @@
 package components
 
-templ Base(content templ.Component) {
-    <body>
-        {Header()}
-        <main> 
-            Nav()
-            {content.Render()}
-        </main> 
-        {Footer()}
-    </body>
+templ Base(title, header string, body templ.Component) {
+    <!doctype html>
+    <html lang="en">
+        @Head(title)
+        <body>
+            @Header(header)
+            <main> 
+                @Nav()
+                @body
+            </main> 
+            @Footer()
+        </body>
+    </html>
 }
+
 
 
 
