@@ -1,0 +1,37 @@
+package components 
+
+import (
+	i "github.com/cheezecakee/urlShort/src/internal"
+    "strconv"
+)
+
+
+templ Stats(urlMapping []i.URLMapping){
+    @Base("Stats", "Stats", StatsContent(urlMapping))
+}
+
+templ StatsContent(urlMapping []i.URLMapping) {
+    <p>This is the stats page</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Original URL</th>
+                <th>Shortened URL</th>
+                <th>Clicks</th>
+                <th>Creation Date</th>
+                <th>Expiration Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            for _, entry := range urlMapping {
+            <tr>
+                <td>{ entry.URL }</td>
+                <td>{ entry.Path }</td>
+                <td>{ strconv.Itoa(entry.ClickCount) }</td>
+                <td>{ entry.CreationDate.Format("2006-01-02 15:04:05") }</td>
+                <td>{ entry.Expires.Format("2006-01-02 15:04:05") }</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}

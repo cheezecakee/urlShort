@@ -1,0 +1,11 @@
+package components 
+
+templ Expired(){
+    @Base("Expired", "Link Expired", ExpiredContent())
+}
+
+templ ExpiredContent() {
+    <p>The link you are trying to access has expired.</p>
+    <p>Create a new link at: </p>
+    <a href="/">[Home]</a>
+}

@@ -1,0 +1,34 @@
+package components
+
+templ CustomContainer(Custom bool) {
+    <div id="custom-container" class="custom-container">
+        if Custom {
+            <div id="custom-options" class="custom-options">
+                <label for="custom-slug">Custom URL Slug</label>
+                <input type="text" id="custom-slug" name="custom_slug" placeholder="e.g., my-url" />
+
+                <label for="url-expiration">Expiration Time Hours ['0' for no expiration]</label>
+                <input type="number" id="url-expiration" name="expiration" min="0" placeholder="24" class="small"/>
+
+                <div class="checkBox-content">
+                    <span>Link</span> 
+                    <span>QR Code</span> 
+                    <label class="checkBox">
+                        <input type="checkbox" id="check-link" name="check-link" />
+                        <div class="transition"></div>
+                    </label>
+                    <label class="checkBox">
+                        <input type="checkbox" id="check-qr" name="check-qr" />
+                        <div class="transition"></div>
+                    </label>
+                </div>
+
+
+            </div>
+        } else {
+            <!-- Empty container when "Short" or "QR Code" is selected -->
+            <div></div>
+        }
+    </div>
+}
+

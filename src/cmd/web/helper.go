@@ -5,8 +5,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
-	"html/template"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -41,32 +39,11 @@ func generateQRCode(longUrl string) (fileName string, filePath string) {
 	return fileName, filePath
 }
 
-func render(w http.ResponseWriter, r *http.Request, mainTemplate string, data interface{}) {
-	templatePath := "./src/ui/templates/"
-	basePath := templatePath + "base.templ"
-	navPath := templatePath + "nav.templ"
-
-	tmpl, err := template.ParseFiles(
-		basePath,
-		navPath,
-		templatePath+mainTemplate+".templ",
-	)
-	if err != nil {
-		http.Error(w, "Unable to load templates", http.StatusInternalServerError)
-		log.Printf("Template error: %v", err)
-		return
-	}
-
-	err = tmpl.ExecuteTemplate(w, "base", data)
-	if err != nil {
-		http.Error(w, "Unable to execute template", http.StatusInternalServerError)
-		log.Printf("Execution error: %v", err)
-	}
-}
-
 func renderTempl(ctx context.Context, w http.ResponseWriter, component templ.Component) error {
 	// Set the content type
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	// Render the component
 	return component.Render(ctx, w)
 }
+
+// func
